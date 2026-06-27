@@ -5,11 +5,11 @@ include:
 
 variables:
   APP_NAME: helloworld
-  # Monorepo multi-services : liste "<service>=<image>" espacée.
-  # SERVICE_NAME est le service vitrine pour l'URL des environnements.
+  # Monorepo multi-services (cf. AGENTS.md) : liste "<service>=<image>"
+  # espacée, un sous-dossier + un Dockerfile par service. SERVICE_NAME reste
+  # le service vitrine pour l'URL des environnements GitLab CI.
   SERVICES: "helloworld-svc=registry.registry.svc.cluster.local:5000/helloworld-svc helloworld-gui=registry.registry.svc.cluster.local:5000/helloworld-gui"
   SERVICE_NAME: helloworld-gui
-  DOMAIN: 192.168.33.100.nip.io
   INTERNAL_GITLAB_HOST: gitlab-webservice-default.gitlab.svc.cluster.local:8181
   MANIFESTS_PROJECT_PATH: root/helloworld-iac
   MANIFESTS_PATH: k8s
