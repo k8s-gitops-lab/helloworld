@@ -2,7 +2,7 @@
 
 Application exemple du POC, sous forme de monorepo multi-services :
 
-- `helloworld-svc` : API FastAPI (`GET /`, `/hello/{name}`, `/health`)
+- `helloworld-svc` : API Rust (`GET /`, `/hello/{name}`, `/health`)
 - `helloworld-gui` : frontend statique nginx
 
 La CI est gérée par le template partagé `root/ci-templates` inclus dans `.gitlab-ci.yml`.
@@ -18,6 +18,12 @@ docker compose up --build
 # GUI  → http://localhost:8080
 # API  → http://localhost:8081
 ```
+
+### Certificat Zscaler pour l'image Rust
+
+Le build Docker de `helloworld-svc` installe les certificats présents dans
+`helloworld-svc/certs/*.crt` dans le build stage Rust et dans l'image runtime.
+Le certificat racine Zscaler utilisé ici est `helloworld-svc/certs/zscaler-root-ca.crt`.
 
 ---
 
@@ -38,16 +44,17 @@ ls ../poc-devops-ci-templates/scripts/deploy.py   # doit exister
 
 ### Configuration
 
-`.gitlab-ci-local.yml` (commité dans ce dépôt) monte les scripts CI en local et
+`.gitlab-ci-local.yml` (commité dans ce dépôt) définit les variables locales et
 remplace l'URL in-cluster de GitLab par l'adresse externe :
 
 ```yaml
-volumes:
-  - ../poc-devops-ci-templates:/ci-scripts:ro
 variables:
   CI_SCRIPTS_DIR: /ci-scripts
   INTERNAL_GITLAB_HOST: gitlab.192.168.33.100.nip.io
 ```
+
+Les jobs qui exécutent les scripts Python du template doivent monter le dépôt
+voisin avec l'option `--volume ../poc-devops-ci-templates:/ci-scripts:ro`.
 
 Les **secrets** vont dans un fichier gitignore à créer une seule fois :
 
@@ -60,6 +67,15 @@ EOF
 
 Le token doit avoir le scope `write_repository` sur `root/helloworld-iac`.
 Il peut être créé dans GitLab → User Settings → Access Tokens.
+
+Si `gitlab-ci-local` tente de récupérer `root/ci-templates` depuis GitHub,
+précharger son cache d'includes depuis le dépôt voisin :
+
+```bash
+mkdir -p .gitlab-ci-local/includes/github.com/root/ci-templates/v0.11.0
+cp ../poc-devops-ci-templates/gitlab-ci.yml \
+  .gitlab-ci-local/includes/github.com/root/ci-templates/v0.11.0/gitlab-ci.yml
+```
 
 ### Jobs disponibles
 
@@ -85,14 +101,18 @@ Les jobs de **déploiement** fonctionnent directement en local : ils clonent
 
 ```bash
 # Déployer la version "local" sur dev (utilise CI_COMMIT_SHORT_SHA=local)
-gitlab-ci-local --variable-file .gitlab-ci-local-secrets.yml deploy-dev
+gitlab-ci-local --variables-file .gitlab-ci-local-secrets.yml \
+  --volume ../poc-devops-ci-templates:/ci-scripts:ro \
+  deploy-dev
 
 # Déployer un tag de release sur rec
-gitlab-ci-local --variable-file .gitlab-ci-local-secrets.yml \
+gitlab-ci-local --variables-file .gitlab-ci-local-secrets.yml \
+  --volume ../poc-devops-ci-templates:/ci-scripts:ro \
   --variable CI_COMMIT_TAG=v1.2.3 deploy-rec
 
 # Rollback prod (annule un commit sur la branche main d'helloworld-iac)
-gitlab-ci-local --variable-file .gitlab-ci-local-secrets.yml \
+gitlab-ci-local --variables-file .gitlab-ci-local-secrets.yml \
+  --volume ../poc-devops-ci-templates:/ci-scripts:ro \
   --variable REVERT_SHA=abc1234 rollback-prod
 ```
 
@@ -108,7 +128,7 @@ En local, Kaniko a besoin d'accéder au registry sur le réseau du cluster :
 curl http://registry.192.168.33.100.nip.io/v2/
 
 # Puis lancer le build (pousse vers le registry local)
-gitlab-ci-local --variable-file .gitlab-ci-local-secrets.yml \
+gitlab-ci-local --variables-file .gitlab-ci-local-secrets.yml \
   --variable SERVICES="helloworld-svc=registry.192.168.33.100.nip.io/helloworld-svc helloworld-gui=registry.192.168.33.100.nip.io/helloworld-gui" \
   build-dev
 ```

@@ -2,26 +2,496 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8">
-  <title>helloworld-gui</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>helloworld</title>
+  <style>
+    :root {
+      --ink: #20231f;
+      --muted: #64685f;
+      --paper: #f4f0e8;
+      --surface: #fffdf8;
+      --line: #d8d0c2;
+      --grid: rgba(32, 35, 31, 0.09);
+      --rivet: #ffb000;
+      --rust: #bd4f2a;
+      --blue: #245a74;
+      --green: #2f7d58;
+      --red: #a83b35;
+      --shadow: 0 28px 70px rgba(32, 35, 31, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-width: 320px;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+        linear-gradient(135deg, #f8f3ea 0%, #ebe4d8 52%, #e5edf0 100%);
+      background-size: 28px 28px, 28px 28px, auto;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    main {
+      width: min(1120px, calc(100% - 32px));
+      min-height: 100vh;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 0.92fr) minmax(340px, 1.08fr);
+      gap: 44px;
+      align-items: center;
+      padding: 44px 0;
+    }
+
+    .intro {
+      display: grid;
+      gap: 26px;
+    }
+
+    .badge {
+      width: fit-content;
+      border: 1px solid var(--ink);
+      padding: 7px 10px;
+      background: var(--rivet);
+      box-shadow: 5px 5px 0 var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 700px;
+      margin: 0;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(3.25rem, 8.8vw, 7.1rem);
+      line-height: 0.9;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .lede {
+      max-width: 540px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.06rem;
+      line-height: 1.7;
+    }
+
+    .route-strip {
+      width: min(100%, 620px);
+      border: 1px solid var(--ink);
+      background: rgba(255, 253, 248, 0.84);
+      box-shadow: 8px 8px 0 rgba(32, 35, 31, 0.16);
+    }
+
+    .route {
+      display: grid;
+      grid-template-columns: 112px minmax(0, 1fr);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .route:last-child {
+      border-bottom: 0;
+    }
+
+    .route code,
+    .route span {
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+    }
+
+    .route code {
+      border-right: 1px solid var(--line);
+      color: var(--blue);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.84rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .route span {
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .console {
+      border: 1px solid var(--ink);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .console-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 54px;
+      border-bottom: 1px solid var(--ink);
+      padding: 0 18px;
+      background: #2f3538;
+      color: #f8f3ea;
+    }
+
+    .window-dots {
+      display: flex;
+      gap: 7px;
+      flex: 0 0 auto;
+    }
+
+    .window-dots span {
+      width: 11px;
+      height: 11px;
+      border: 1px solid rgba(0, 0, 0, 0.3);
+      border-radius: 50%;
+      background: var(--rivet);
+    }
+
+    .window-dots span:nth-child(2) {
+      background: #f0724f;
+    }
+
+    .window-dots span:nth-child(3) {
+      background: #60b982;
+    }
+
+    .service-name {
+      overflow: hidden;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.86rem;
+      font-weight: 800;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .console-body {
+      padding: 24px;
+    }
+
+    .status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 22px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px 16px;
+      background: #f7f4ed;
+    }
+
+    .status-label {
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .status-value {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      font-weight: 900;
+    }
+
+    .status-value::before {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 0 4px rgba(168, 59, 53, 0.12);
+      content: "";
+    }
+
+    .status-value.is-ok::before {
+      background: var(--green);
+      box-shadow: 0 0 0 4px rgba(47, 125, 88, 0.14);
+    }
+
+    form {
+      display: grid;
+      gap: 12px;
+    }
+
+    label {
+      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 800;
+    }
+
+    .control-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+    }
+
+    input,
+    button {
+      min-height: 54px;
+      border-radius: 8px;
+      font: inherit;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid var(--line);
+      padding: 0 15px;
+      color: var(--ink);
+      background: #fffaf0;
+    }
+
+    input:focus {
+      border-color: var(--blue);
+      outline: 3px solid rgba(36, 90, 116, 0.2);
+    }
+
+    button {
+      border: 1px solid var(--ink);
+      padding: 0 18px;
+      color: #fffaf0;
+      background: var(--rust);
+      box-shadow: 4px 4px 0 var(--ink);
+      font-weight: 900;
+      cursor: pointer;
+      transition: transform 140ms ease, box-shadow 140ms ease;
+      white-space: nowrap;
+    }
+
+    button:hover {
+      transform: translate(1px, 1px);
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+
+    button:focus-visible {
+      outline: 3px solid rgba(189, 79, 42, 0.26);
+      outline-offset: 4px;
+    }
+
+    .result {
+      min-height: 112px;
+      margin: 24px 0 0;
+      border: 1px solid var(--ink);
+      border-radius: 8px;
+      padding: 20px;
+      background: #20231f;
+      color: #f8f3ea;
+    }
+
+    .result-label {
+      display: block;
+      margin-bottom: 10px;
+      color: #c9d7d9;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .message {
+      display: block;
+      overflow-wrap: anywhere;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.45rem, 3vw, 2rem);
+      line-height: 1.16;
+      letter-spacing: 0;
+    }
+
+    .result.is-error {
+      background: #fff0ed;
+      color: var(--red);
+    }
+
+    .result.is-error .result-label {
+      color: var(--red);
+    }
+
+    .json {
+      margin-top: 18px;
+      border-top: 1px solid rgba(248, 243, 234, 0.22);
+      padding-top: 14px;
+      color: #d7dccf;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+
+    .result.is-error .json {
+      border-top-color: rgba(168, 59, 53, 0.22);
+      color: var(--red);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      button {
+        transition: none;
+      }
+    }
+
+    @media (max-width: 860px) {
+      main {
+        grid-template-columns: 1fr;
+        align-items: start;
+      }
+
+      h1 {
+        font-size: clamp(3rem, 14vw, 5.2rem);
+      }
+    }
+
+    @media (max-width: 560px) {
+      main {
+        width: min(100% - 24px, 1120px);
+        padding: 24px 0;
+      }
+
+      .route,
+      .control-row {
+        grid-template-columns: 1fr;
+      }
+
+      .route code {
+        min-height: 40px;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .route span {
+        min-height: 46px;
+      }
+
+      .console-body {
+        padding: 18px;
+      }
+
+      .status-row {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h1>helloworld-gui</h1>
-  <input id="name" type="text" placeholder="Ton prénom" value="World">
-  <button id="greet">Dire bonjour</button>
-  <p id="result"></p>
+  <main>
+    <section class="intro" aria-labelledby="page-title">
+      <div class="badge">Rust API / nginx proxy</div>
+      <h1 id="page-title">Hello, vraiment en service.</h1>
+      <p class="lede">
+        Une interface de test plus propre pour vérifier le chemin complet :
+        navigateur, nginx, proxy `/api`, puis réponse JSON du service Rust.
+      </p>
+
+      <div class="route-strip" aria-label="Routes disponibles">
+        <div class="route">
+          <code>GET /</code>
+          <span>Message par défaut du service.</span>
+        </div>
+        <div class="route">
+          <code>GET /hello/:name</code>
+          <span>Construit une salutation JSON avec le prénom saisi.</span>
+        </div>
+        <div class="route">
+          <code>GET /health</code>
+          <span>Contrôle rapide utilisé par cette page.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="console" aria-label="Tester l'API helloworld">
+      <div class="console-top">
+        <div class="window-dots" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <div class="service-name">helloworld-svc:8000</div>
+      </div>
+
+      <div class="console-body">
+        <div class="status-row">
+          <span class="status-label">Etat de l'API</span>
+          <span id="status" class="status-value">Verification</span>
+        </div>
+
+        <form id="hello-form">
+          <label for="name">Nom a envoyer</label>
+          <div class="control-row">
+            <input id="name" type="text" autocomplete="given-name" maxlength="80" placeholder="World" value="World">
+            <button type="submit">Appeler l'API</button>
+          </div>
+        </form>
+
+        <div id="result" class="result" aria-live="polite">
+          <span class="result-label">Reponse</span>
+          <span id="message" class="message">Pret pour `/api/hello/World`.</span>
+          <pre id="json" class="json">{ "service": "helloworld-svc" }</pre>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <script>
-    document.getElementById('greet').addEventListener('click', async () => {
-      const name = document.getElementById('name').value || 'World';
-      const result = document.getElementById('result');
+    const form = document.getElementById('hello-form');
+    const nameInput = document.getElementById('name');
+    const result = document.getElementById('result');
+    const message = document.getElementById('message');
+    const json = document.getElementById('json');
+    const status = document.getElementById('status');
+
+    function showError(text) {
+      result.classList.add('is-error');
+      message.textContent = text;
+      json.textContent = '{ "error": true }';
+    }
+
+    async function refreshHealth() {
+      try {
+        const response = await fetch('/api/health');
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        status.textContent = data.status === 'ok' ? 'Disponible' : data.status;
+        status.classList.toggle('is-ok', data.status === 'ok');
+      } catch {
+        status.textContent = 'Indisponible';
+        status.classList.remove('is-ok');
+      }
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const name = nameInput.value.trim() || 'World';
+      result.classList.remove('is-error');
+      message.textContent = 'Appel en cours...';
+      json.textContent = `GET /api/hello/${name}`;
+
       try {
         const response = await fetch(`/api/hello/${encodeURIComponent(name)}`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-        result.textContent = data.message;
+        message.textContent = data.message;
+        json.textContent = JSON.stringify(data, null, 2);
       } catch (err) {
-        result.textContent = `Erreur d'appel à l'API : ${err}`;
+        showError(`L'appel a echoue : ${err.message}`);
       }
     });
+
+    refreshHealth();
   </script>
 </body>
 </html>

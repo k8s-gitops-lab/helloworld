@@ -1,13 +1,9 @@
 # Surcharges pour gitlab-ci-local (https://github.com/firecow/gitlab-ci-local).
-# Ce fichier est commitable — il utilise un chemin relatif conventionnel.
+# Ce fichier est commitable — il utilise des variables locales non secrètes.
 # Les secrets vont dans .gitlab-ci-local-secrets.yml (gitignore).
 #
 # Prérequis : poc-devops-ci-templates doit être un dossier voisin :
 #   ../poc-devops-ci-templates/
-
-volumes:
-  # Monte les scripts Python du template CI sans avoir à les cloner depuis GitLab.
-  - ../poc-devops-ci-templates:/ci-scripts:ro
 
 variables:
   CI_SCRIPTS_DIR: /ci-scripts

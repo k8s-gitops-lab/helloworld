@@ -2,6 +2,8 @@
 .venv/
 __pycache__/
 *.pyc
+target/
 
 # Secrets locaux gitlab-ci-local (token GitLab, etc.)
 .gitlab-ci-local-secrets.yml
+.gitlab-ci-local/
