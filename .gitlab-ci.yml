@@ -1,6 +1,6 @@
 include:
   - project: root/ci-templates
-    ref: v0.11.1
+    ref: main
     file: /gitlab-ci.yml
 
 variables:
