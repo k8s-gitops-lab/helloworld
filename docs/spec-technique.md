@@ -2,7 +2,7 @@
 
 ## Structure
 
-- `.gitlab-ci.yml` inclut `root/ci-templates` à la ref `v1.13.1`.
+- `.gitlab-ci.yml` inclut `infra/ci-templates` à la ref `v1.13.1`.
 - `.releaserc.json` configure `semantic-release`.
 - `docker-compose.yml` lance les deux services localement.
 - `helloworld-svc/` contient l'API Rust Axum.
@@ -31,7 +31,7 @@ Le dépôt définit les variables principales suivantes :
 - `APP_NAME=helloworld` ;
 - `SERVICES`, liste des couples `<service>=<image>` ;
 - `SERVICE_NAME=helloworld-gui`, service vitrine pour les URLs GitLab ;
-- `MANIFESTS_PROJECT_PATH=root/helloworld-iac` ;
+- `MANIFESTS_PROJECT_PATH=infra/helloworld-iac` ;
 - `MANIFESTS_PATH=k8s` ;
 - `HAS_PREPROD=true`.
 

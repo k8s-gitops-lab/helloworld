@@ -4,7 +4,7 @@
 
 `helloworld` est l'application de référence du POC `poc-devops`. Elle démontre
 le contrat applicatif attendu par la plateforme : un dépôt de code unique,
-plusieurs services, une CI incluse depuis `root/ci-templates` et un déploiement
+plusieurs services, une CI incluse depuis `infra/ci-templates` et un déploiement
 GitOps vers le dépôt frère `helloworld-iac`.
 
 La vision globale, le flow de release et les limites du POC sont décrits dans
