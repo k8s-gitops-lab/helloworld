@@ -120,14 +120,14 @@ gitlab-ci-local --variables-file .gitlab-ci-local-secrets.yml \
 
 Les jobs `build-dev` et `build-rec` utilisent Kaniko, qui construit les images
 **sans démon Docker** et les pousse directement sur GHCR
-(`ghcr.io/poc-devops-elkouhen`).
+(`ghcr.io/k8s-gitops-lab`).
 
 En local, Kaniko a besoin d'un `GHCR_TOKEN` valide (voir
 `.gitlab-ci-local-secrets.yml`, gitignored) :
 
 ```bash
 gitlab-ci-local --variables-file .gitlab-ci-local-secrets.yml \
-  --variable SERVICES="helloworld-svc=ghcr.io/poc-devops-elkouhen/helloworld-svc helloworld-gui=ghcr.io/poc-devops-elkouhen/helloworld-gui" \
+  --variable SERVICES="helloworld-svc=ghcr.io/k8s-gitops-lab/helloworld-svc helloworld-gui=ghcr.io/k8s-gitops-lab/helloworld-gui" \
   build-dev
 ```
 

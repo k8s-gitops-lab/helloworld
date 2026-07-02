@@ -8,7 +8,7 @@ variables:
   # Monorepo multi-services (cf. AGENTS.md) : liste "<service>=<image>"
   # espacée, un sous-dossier + un Dockerfile par service. SERVICE_NAME reste
   # le service vitrine pour l'URL des environnements GitLab CI.
-  SERVICES: "helloworld-svc=ghcr.io/poc-devops-elkouhen/helloworld-svc helloworld-gui=ghcr.io/poc-devops-elkouhen/helloworld-gui"
+  SERVICES: "helloworld-svc=ghcr.io/k8s-gitops-lab/helloworld-svc helloworld-gui=ghcr.io/k8s-gitops-lab/helloworld-gui"
   SERVICE_NAME: helloworld-gui
   INTERNAL_GITLAB_HOST: gitlab-webservice-default.gitlab.svc.cluster.local:8181
   MANIFESTS_PROJECT_PATH: infra/helloworld-iac
