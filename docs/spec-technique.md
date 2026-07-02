@@ -2,7 +2,7 @@
 
 ## Structure
 
-- `.gitlab-ci.yml` inclut `infra/ci-templates` à la ref `v1.13.1`.
+- `.gitlab-ci.yml` inclut `infra/ci-templates` à la ref `v1.15.1`.
 - `.releaserc.json` configure `semantic-release`.
 - `docker-compose.yml` lance les deux services localement.
 - `helloworld-svc/` contient l'API Rust Axum.

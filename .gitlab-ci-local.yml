@@ -2,8 +2,8 @@
 # Ce fichier est commitable — il utilise des variables locales non secrètes.
 # Les secrets vont dans .gitlab-ci-local-secrets.yml (gitignore).
 #
-# Prérequis : poc-devops-ci-templates doit être un dossier voisin :
-#   ../poc-devops-ci-templates/
+# Prérequis : ci-templates doit être un dossier voisin :
+#   ../ci-templates/
 
 variables:
   CI_SCRIPTS_DIR: /ci-scripts

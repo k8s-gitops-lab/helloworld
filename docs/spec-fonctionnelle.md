@@ -49,4 +49,5 @@ Il n'y a pas de version indépendante par service dans ce POC.
 
 - `ci-templates` pour la logique CI partagée ;
 - `helloworld-iac` pour l'état GitOps des environnements ;
-- `platform-cicd` pour GitLab, ArgoCD, le runner et le registry.
+- `platform-cicd` pour GitLab, ArgoCD et le runner (les images sont poussées
+  sur GHCR, pas sur un registry géré par `platform-cicd`).

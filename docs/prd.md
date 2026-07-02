@@ -25,7 +25,7 @@ L'application doit fournir un exemple simple mais réaliste d'onboarding :
 - Développeur applicatif qui veut comprendre le format attendu par la
   plateforme.
 - Mainteneur plateforme qui vérifie le comportement de bout en bout :
-  build, registry interne, mise à jour des manifests, synchronisation ArgoCD.
+  build, push GHCR, mise à jour des manifests, synchronisation ArgoCD.
 - Auteur d'une nouvelle app qui veut copier une structure minimale.
 
 ## Critères d'acceptation

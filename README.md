@@ -119,17 +119,15 @@ gitlab-ci-local --variables-file .gitlab-ci-local-secrets.yml \
 ### Jobs de build (Kaniko)
 
 Les jobs `build-dev` et `build-rec` utilisent Kaniko, qui construit les images
-**sans démon Docker** et les pousse directement dans le registry.
+**sans démon Docker** et les pousse directement sur GHCR
+(`ghcr.io/poc-devops-elkouhen`).
 
-En local, Kaniko a besoin d'accéder au registry sur le réseau du cluster :
+En local, Kaniko a besoin d'un `GHCR_TOKEN` valide (voir
+`.gitlab-ci-local-secrets.yml`, gitignored) :
 
 ```bash
-# Vérifier que le registry est joignable
-curl http://registry.192.168.33.100.nip.io/v2/
-
-# Puis lancer le build (pousse vers le registry local)
 gitlab-ci-local --variables-file .gitlab-ci-local-secrets.yml \
-  --variable SERVICES="helloworld-svc=registry.192.168.33.100.nip.io/helloworld-svc helloworld-gui=registry.192.168.33.100.nip.io/helloworld-gui" \
+  --variable SERVICES="helloworld-svc=ghcr.io/poc-devops-elkouhen/helloworld-svc helloworld-gui=ghcr.io/poc-devops-elkouhen/helloworld-gui" \
   build-dev
 ```
 
