@@ -5,7 +5,7 @@ Application exemple du POC, sous forme de monorepo multi-services :
 - `helloworld-svc` : API Rust (`GET /`, `/hello/{name}`, `/health`)
 - `helloworld-gui` : frontend statique nginx
 
-La CI est gérée par le template partagé `infra/ci-templates` inclus dans `.gitlab-ci.yml`.
+La CI est gérée par le template partagé `shared-ci/ci-templates` inclus dans `.gitlab-ci.yml`.
 
 ---
 
@@ -68,13 +68,13 @@ EOF
 Le token doit avoir le scope `write_repository` sur `infra/helloworld-iac`.
 Il peut être créé dans GitLab → User Settings → Access Tokens.
 
-Si `gitlab-ci-local` tente de récupérer `infra/ci-templates` depuis GitHub,
+Si `gitlab-ci-local` tente de récupérer `shared-ci/ci-templates` depuis GitHub,
 précharger son cache d'includes depuis le dépôt voisin :
 
 ```bash
-mkdir -p .gitlab-ci-local/includes/github.com/infra/ci-templates/v0.11.1
+mkdir -p .gitlab-ci-local/includes/github.com/shared-ci/ci-templates/v0.11.1
 cp ../ci-templates/gitlab-ci.yml \
-  .gitlab-ci-local/includes/github.com/infra/ci-templates/v0.11.1/gitlab-ci.yml
+  .gitlab-ci-local/includes/github.com/shared-ci/ci-templates/v0.11.1/gitlab-ci.yml
 ```
 
 ### Jobs disponibles
