@@ -31,7 +31,7 @@ Le dépôt définit les variables principales suivantes :
 - `APP_NAME=helloworld` ;
 - `SERVICES`, liste des couples `<service>=<image>` ;
 - `SERVICE_NAME=helloworld-gui`, service vitrine pour les URLs GitLab ;
-- `MANIFESTS_PROJECT_PATH=infra/helloworld-iac` ;
+- `MANIFESTS_PROJECT_PATH=hello-groupe/helloworld-iac` ;
 - `MANIFESTS_PATH=k8s` ;
 - `HAS_PREPROD=true`.
 

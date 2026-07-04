@@ -1,9 +1,9 @@
 ci_access:
   projects:
-    - id: infra/helloworld
+    - id: hello-groupe/helloworld
 
 user_access:
   access_as:
     agent: {}
   projects:
-    - id: infra/helloworld
+    - id: hello-groupe/helloworld

@@ -1,7 +1,7 @@
 {
   "branches": ["main"],
   "tagFormat": "v${version}",
-  "repositoryUrl": "http://gitlab-webservice-default.gitlab.svc.cluster.local:8181/infra/helloworld.git",
+  "repositoryUrl": "http://gitlab-webservice-default.gitlab.svc.cluster.local:8181/hello-groupe/helloworld.git",
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",

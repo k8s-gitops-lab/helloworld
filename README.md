@@ -65,7 +65,7 @@ variables:
 EOF
 ```
 
-Le token doit avoir le scope `write_repository` sur `infra/helloworld-iac`.
+Le token doit avoir le scope `write_repository` sur `hello-groupe/helloworld-iac`.
 Il peut être créé dans GitLab → User Settings → Access Tokens.
 
 Si `gitlab-ci-local` tente de récupérer `shared-ci/ci-templates` depuis GitHub,
@@ -97,7 +97,7 @@ rollback-prod     (promote)    manuel + REVERT_SHA
 ### Exécution
 
 Les jobs de **déploiement** fonctionnent directement en local : ils clonent
-`infra/helloworld-iac`, mettent à jour `kustomization.yaml` via PyYAML et poussent.
+`hello-groupe/helloworld-iac`, mettent à jour `kustomization.yaml` via PyYAML et poussent.
 
 ```bash
 # Déployer la version "local" sur dev (utilise CI_COMMIT_SHORT_SHA=local)
