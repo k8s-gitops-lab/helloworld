@@ -10,7 +10,6 @@ variables:
   # le service vitrine pour l'URL des environnements GitLab CI.
   SERVICES: "helloworld-svc=ghcr.io/k8s-gitops-lab/helloworld-svc helloworld-gui=ghcr.io/k8s-gitops-lab/helloworld-gui"
   SERVICE_NAME: helloworld-gui
-  INTERNAL_GITLAB_HOST: gitlab-webservice-default.gitlab.svc.cluster.local:8181
   MANIFESTS_PROJECT_PATH: hello-groupe/helloworld-iac
   MANIFESTS_PATH: k8s
   HAS_PREPROD: "true"
