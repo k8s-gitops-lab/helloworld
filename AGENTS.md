@@ -12,7 +12,7 @@ depuis `ci-templates`, déploiement GitOps vers `helloworld-iac`.
 helloworld-svc/   API Rust (Axum/Tokio) — port 8000, routes /, /hello/:name, /health
 helloworld-gui/   Frontend statique nginx — port 80, proxy /api/ → helloworld-svc
 docker-compose.yml  Lancement local (gui:8080, svc:8081)
-.gitlab-ci.yml      Généré par le seed plateforme — inclut ci-templates
+.gitlab-ci.yml      Inclut ci-templates (ref versionnée) + variables propres
 .releaserc.json     Configuration semantic-release
 ```
 
@@ -32,12 +32,13 @@ docker compose up --build
   `<service>=<image>` séparés par des espaces.
 - `SERVICE_NAME` désigne le service vitrine pour les URLs d'environnement GitLab.
 
-## `.gitlab-ci.yml` — fichier géré
+## `.gitlab-ci.yml` — cohérence avec l'inventaire
 
-Ce fichier est **généré et mis à jour automatiquement** par `gitlab-seed.py`
-lors du seed plateforme. Les modifications manuelles peuvent être écrasées à
-la prochaine exécution du seed. Pour changer les variables CI, modifier
-l'inventaire dans `platform-gitops/argocd/apps/helloworld.yaml`.
+Ce fichier recopie à la main des faits déclarés dans l'inventaire
+`platform-gitops/argocd/apps/helloworld.yaml` (services, `hasPreprod`,
+chemin des manifests). Rien ne les synchronise automatiquement : après toute
+modification de l'un ou de l'autre, vérifier la cohérence avec
+`toolbox/scripts/check-app-gitlab-ci.py` (cf. `toolbox/AGENTS.md`).
 
 ## `.releaserc.json` — URL in-cluster
 

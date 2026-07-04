@@ -28,7 +28,8 @@ Le dépôt suit le flow défini par `platform-cicd` :
 
 - `main` est l'unique branche longue durée du code ;
 - chaque merge sur `main` déclenche un build mutable et un déploiement dev ;
-- une release est créée par le job manuel `semantic-release` ;
+- une release est créée par le job `semantic-release` (automatique sur
+  `main`, si les commits mergés le justifient) ;
 - le tag `vX.Y.Z` déclenche le pipeline de promotion ;
 - les promotions modifient le dépôt `helloworld-iac`, pas le cluster
   directement.

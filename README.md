@@ -72,9 +72,10 @@ Si `gitlab-ci-local` tente de récupérer `shared-ci/ci-templates` depuis GitHub
 précharger son cache d'includes depuis le dépôt voisin :
 
 ```bash
-mkdir -p .gitlab-ci-local/includes/github.com/shared-ci/ci-templates/v0.11.1
+# <ref> = la ref du template déclarée dans .gitlab-ci.yml (ex. v1.15.1)
+mkdir -p .gitlab-ci-local/includes/github.com/shared-ci/ci-templates/<ref>
 cp ../ci-templates/gitlab-ci.yml \
-  .gitlab-ci-local/includes/github.com/shared-ci/ci-templates/v0.11.1/gitlab-ci.yml
+  .gitlab-ci-local/includes/github.com/shared-ci/ci-templates/<ref>/gitlab-ci.yml
 ```
 
 ### Jobs disponibles
@@ -84,7 +85,7 @@ gitlab-ci-local --list
 ```
 
 ```
-semantic-release  (prepare)   manuel
+semantic-release  (promote)    main
 build-dev         (build)      main
 build-rec         (build)      tag vX.Y.Z
 deploy-dev        (deploy)     main
@@ -150,5 +151,7 @@ push main
                  ──►  deploy-prod    (manuel)
 ```
 
-Le tag est créé manuellement via le job `semantic-release` (analyse les
-Conventional Commits depuis le dernier tag et pousse un tag `vX.Y.Z`).
+Le tag est créé par le job `semantic-release`, exécuté automatiquement sur
+`main` après `deploy-dev` : il analyse les Conventional Commits depuis le
+dernier tag et pousse un tag `vX.Y.Z` (rien n'est publié si aucun commit
+`feat:`/`fix:`/... n'est présent).
