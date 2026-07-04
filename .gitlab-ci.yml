@@ -1,6 +1,6 @@
 include:
   - project: shared-ci/ci-templates
-    ref: v1.15.1
+    ref: v1.15.2
     file: /gitlab-ci.yml
 
 variables:
