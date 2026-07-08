@@ -5,7 +5,7 @@ Application exemple du POC, sous forme de monorepo multi-services :
 - `helloworld-svc` : API Rust (`GET /`, `/hello/{name}`, `/health`)
 - `helloworld-gui` : frontend statique nginx
 
-La CI est gérée par le template partagé `shared-ci/ci-templates` inclus dans `.gitlab-ci.yml`.
+La CI est gérée par les components partagés `shared-ci/ci-templates` inclus dans `.gitlab-ci.yml`.
 
 ---
 
@@ -69,13 +69,13 @@ Le token doit avoir le scope `write_repository` sur `hello-groupe/helloworld-iac
 Il peut être créé dans GitLab → User Settings → Access Tokens.
 
 Si `gitlab-ci-local` tente de récupérer `shared-ci/ci-templates` depuis GitHub,
-précharger son cache d'includes depuis le dépôt voisin :
+précharger son cache de components depuis le dépôt voisin :
 
 ```bash
-# <ref> = la ref du template déclarée dans .gitlab-ci.yml (ex. v1.15.1)
-mkdir -p .gitlab-ci-local/includes/github.com/shared-ci/ci-templates/<ref>
-cp ../ci-templates/gitlab-ci.yml \
-  .gitlab-ci-local/includes/github.com/shared-ci/ci-templates/<ref>/gitlab-ci.yml
+# <ref> = la ref des components déclarée dans .gitlab-ci.yml (ex. v2.0.0)
+mkdir -p .gitlab-ci-local/includes/github.com/shared-ci/ci-templates/<ref>/templates
+cp -R ../ci-templates/templates/* \
+  .gitlab-ci-local/includes/github.com/shared-ci/ci-templates/<ref>/templates/
 ```
 
 ### Jobs disponibles
@@ -128,7 +128,6 @@ En local, Kaniko a besoin d'un `GHCR_TOKEN` valide (voir
 
 ```bash
 gitlab-ci-local --variables-file .gitlab-ci-local-secrets.yml \
-  --variable SERVICES="helloworld-svc=ghcr.io/k8s-gitops-lab/helloworld-svc helloworld-gui=ghcr.io/k8s-gitops-lab/helloworld-gui" \
   build-dev
 ```
 

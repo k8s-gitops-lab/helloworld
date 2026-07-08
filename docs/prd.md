@@ -4,7 +4,7 @@
 
 `helloworld` est l'application de référence du POC `poc-devops`. Elle démontre
 le contrat applicatif attendu par la plateforme : un dépôt de code unique,
-plusieurs services, une CI incluse depuis `shared-ci/ci-templates` et un déploiement
+plusieurs services, une CI incluse via les components `shared-ci/ci-templates` et un déploiement
 GitOps vers le dépôt frère `helloworld-iac`.
 
 La vision globale, le flow de release et les limites du POC sont décrits dans
@@ -33,8 +33,8 @@ L'application doit fournir un exemple simple mais réaliste d'onboarding :
 - `docker compose up --build` démarre le frontend et le backend localement.
 - Le backend répond sur `/`, `/hello/{name}` et `/health`.
 - Le frontend est servi par nginx et appelle l'API via le routage applicatif.
-- Le pipeline applicatif inclut le template CI versionné.
-- Les services déclarés dans `SERVICES` ont chacun un sous-dossier et un
+- Le pipeline applicatif inclut les components CI versionnés.
+- Les services déclarés dans l'input `services` ont chacun un sous-dossier et un
   `Dockerfile`.
 - Les releases suivent le modèle plateforme : `semantic-release`, tag
   `vX.Y.Z`, promotion `rec` puis `preprod` et `prod`.

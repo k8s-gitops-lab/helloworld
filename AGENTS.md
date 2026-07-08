@@ -9,11 +9,11 @@ depuis `ci-templates`, déploiement GitOps vers `helloworld-iac`.
 ## Structure
 
 ```
-helloworld-svc/   API Rust (Axum/Tokio) — port 8000, routes /, /hello/:name, /health
-helloworld-gui/   Frontend statique nginx — port 80, proxy /api/ → helloworld-svc
-docker-compose.yml  Lancement local (gui:8080, svc:8081)
-.gitlab-ci.yml      Inclut ci-templates (ref versionnée) + variables propres
-.releaserc.json     Configuration semantic-release
+helloworld-svc/      API Rust (Axum/Tokio) — port 8000, routes /, /hello/:name, /health
+helloworld-gui/      Frontend statique nginx — port 80, proxy /api/ → helloworld-svc
+docker-compose.yml   Lancement local (gui:8080, svc:8081)
+.gitlab-ci.yml       Inclut les components ci-templates (ref versionnée) + inputs propres
+.releaserc.json      Configuration semantic-release
 ```
 
 ## Développement local
@@ -28,17 +28,17 @@ docker compose up --build
 
 - Chaque service doit conserver un sous-dossier portant **exactement son nom**
   et un `Dockerfile` à sa racine (Kaniko utilise ce chemin).
-- La variable `SERVICES` dans `.gitlab-ci.yml` liste les couples
+- L'input `services` du component `build-kaniko` liste les couples
   `<service>=<image>` séparés par des espaces.
-- `SERVICE_NAME` désigne le service vitrine pour les URLs d'environnement GitLab.
+- L'input `service_name` désigne le service vitrine pour les URLs d'environnement GitLab.
 
 ## `.gitlab-ci.yml` — cohérence avec l'inventaire
 
 Ce fichier recopie à la main des faits déclarés dans l'inventaire
 `platform-gitops/argocd/apps/helloworld.yaml` (services, `hasPreprod`,
-chemin des manifests). Rien ne les synchronise automatiquement : après toute
-modification de l'un ou de l'autre, vérifier la cohérence avec
-`toolbox/scripts/check-app-gitlab-ci.py` (cf. `toolbox/AGENTS.md`).
+chemin des manifests) sous forme d'inputs de components. Rien ne les
+synchronise automatiquement : après toute modification de l'un ou de l'autre,
+vérifier la cohérence avec l'inventaire.
 
 ## `.releaserc.json` — URL in-cluster
 

@@ -1,15 +1,19 @@
-include:
-  - project: shared-ci/ci-templates
-    ref: v1.15.2
-    file: /gitlab-ci.yml
+stages:
+  - build
+  - deploy
+  - promote
 
-variables:
-  APP_NAME: helloworld
-  # Monorepo multi-services (cf. AGENTS.md) : liste "<service>=<image>"
-  # espacée, un sous-dossier + un Dockerfile par service. SERVICE_NAME reste
-  # le service vitrine pour l'URL des environnements GitLab CI.
-  SERVICES: "helloworld-svc=ghcr.io/k8s-gitops-lab/helloworld-svc helloworld-gui=ghcr.io/k8s-gitops-lab/helloworld-gui"
-  SERVICE_NAME: helloworld-gui
-  MANIFESTS_PROJECT_PATH: hello-groupe/helloworld-iac
-  MANIFESTS_PATH: k8s
-  HAS_PREPROD: "true"
+include:
+  - component: $CI_SERVER_FQDN/shared-ci/ci-templates/build-kaniko@v2.0.0
+    inputs:
+      services: "helloworld-svc=ghcr.io/k8s-gitops-lab/helloworld-svc helloworld-gui=ghcr.io/k8s-gitops-lab/helloworld-gui"
+  - component: $CI_SERVER_FQDN/shared-ci/ci-templates/deploy-gitops@v2.0.0
+    inputs:
+      app_name: helloworld
+      service_name: helloworld-gui
+      manifests_project_path: hello-groupe/helloworld-iac
+      manifests_path: k8s
+      has_preprod: true
+  - component: $CI_SERVER_FQDN/shared-ci/ci-templates/promote@v2.0.0
+    inputs:
+      manifests_project_path: hello-groupe/helloworld-iac

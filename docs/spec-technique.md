@@ -2,7 +2,8 @@
 
 ## Structure
 
-- `.gitlab-ci.yml` inclut `shared-ci/ci-templates` à la ref `v1.15.1`.
+- `.gitlab-ci.yml` inclut les components `shared-ci/ci-templates` à la ref
+  `v2.0.0`.
 - `.releaserc.json` configure `semantic-release`.
 - `docker-compose.yml` lance les deux services localement.
 - `helloworld-svc/` contient l'API Rust Axum.
@@ -24,22 +25,22 @@ le build et dans l'image finale pour supporter l'environnement réseau du POC.
 local, Docker Compose l'expose sur `8080`. Dans Kubernetes, il est exposé via
 les manifests du dépôt `helloworld-iac`.
 
-## Variables CI
+## Inputs CI
 
-Le dépôt définit les variables principales suivantes :
+Le dépôt fournit les inputs principaux suivants aux components `ci-templates` :
 
-- `APP_NAME=helloworld` ;
-- `SERVICES`, liste des couples `<service>=<image>` ;
-- `SERVICE_NAME=helloworld-gui`, service vitrine pour les URLs GitLab ;
-- `MANIFESTS_PROJECT_PATH=hello-groupe/helloworld-iac` ;
-- `MANIFESTS_PATH=k8s` ;
-- `HAS_PREPROD=true`.
+- `app_name=helloworld` ;
+- `services`, liste des couples `<service>=<image>` ;
+- `service_name=helloworld-gui`, service vitrine pour les URLs GitLab ;
+- `manifests_project_path=hello-groupe/helloworld-iac` ;
+- `manifests_path=k8s` ;
+- `has_preprod=true`.
 
 ## Contrat avec la plateforme
 
 Chaque service doit conserver un sous-dossier portant son nom et un
-`Dockerfile` à sa racine. Le template CI utilise ce nom pour construire les
-images avec Kaniko.
+`Dockerfile` à sa racine. Le component `build-kaniko` utilise ce nom pour
+construire les images avec Kaniko.
 
 Le déploiement est indirect : les jobs CI clonent `helloworld-iac`, modifient
 `k8s/kustomization.yaml`, puis poussent sur la branche d'environnement
