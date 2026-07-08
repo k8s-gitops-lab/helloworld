@@ -24,7 +24,7 @@ Le paramètre `name` est nettoyé côté serveur. Une valeur vide retombe sur
 
 ## Comportement CI/CD
 
-Le dépôt suit le flow défini par `platform-cicd` :
+Le dépôt suit le flow défini par `platform-bootstrap` :
 
 - `main` est l'unique branche longue durée du code ;
 - chaque merge sur `main` déclenche un build mutable et un déploiement dev ;
@@ -50,5 +50,5 @@ Il n'y a pas de version indépendante par service dans ce POC.
 
 - `ci-templates` pour la logique CI partagée ;
 - `helloworld-iac` pour l'état GitOps des environnements ;
-- `platform-cicd` pour GitLab, ArgoCD et le runner (les images sont poussées
-  sur GHCR, pas sur un registry géré par `platform-cicd`).
+- `platform-bootstrap` pour GitLab, ArgoCD et le runner (les images sont poussées
+  sur GHCR, pas sur un registry géré par `platform-bootstrap`).
