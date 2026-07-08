@@ -30,7 +30,9 @@ les manifests du dépôt `helloworld-iac`.
 Le dépôt fournit les inputs principaux suivants aux components `ci-templates` :
 
 - `app_name=helloworld` ;
-- `services`, liste des couples `<service>=<image>` ;
+- `dockerfile`/`context_path`/`snapshot_image`/`release_image` par service,
+  passés au component `build-docker` (un jeu par service, fan-out via
+  `parallel: matrix:` pour le second service — voir `.gitlab-ci.yml`) ;
 - `service_name=helloworld-gui`, service vitrine pour les URLs GitLab ;
 - `manifests_project_path=hello-groupe/helloworld-iac` ;
 - `manifests_path=k8s` ;
@@ -39,8 +41,8 @@ Le dépôt fournit les inputs principaux suivants aux components `ci-templates` 
 ## Contrat avec la plateforme
 
 Chaque service doit conserver un sous-dossier portant son nom et un
-`Dockerfile` à sa racine. Le component `build-kaniko` utilise ce nom pour
-construire les images avec Kaniko.
+`Dockerfile` à sa racine. Le component `build-docker` (qui enrobe
+to-be-continuous/docker) utilise ce chemin pour construire les images.
 
 Le déploiement est indirect : les jobs CI clonent `helloworld-iac`, modifient
 `k8s/kustomization.yaml`, puis poussent sur la branche d'environnement

@@ -1,19 +1,50 @@
 stages:
-  - build
-  - deploy
-  - promote
+  - build          # docker-hadolint
+  - package-build  # docker-buildah-build
+  - package-test   # docker-trivy, docker-sbom
+  - deploy         # deploy-dev/rec/preprod/prod
+  - publish        # docker-publish, semantic-release
+  - promote        # rollback-prod
 
 include:
-  - component: $CI_SERVER_FQDN/shared-ci/ci-templates/build-kaniko@v2.0.0
+  - component: $CI_SERVER_FQDN/shared-ci/ci-templates/build-docker@v3.0.0
     inputs:
-      services: "helloworld-svc=ghcr.io/k8s-gitops-lab/helloworld-svc helloworld-gui=ghcr.io/k8s-gitops-lab/helloworld-gui"
-  - component: $CI_SERVER_FQDN/shared-ci/ci-templates/deploy-gitops@v2.0.0
+      dockerfile: helloworld-svc/Dockerfile
+      context_path: helloworld-svc
+      snapshot_image: ghcr.io/k8s-gitops-lab/helloworld-svc/snapshot:$CI_COMMIT_SHORT_SHA
+      release_image: ghcr.io/k8s-gitops-lab/helloworld-svc
+  - component: $CI_SERVER_FQDN/shared-ci/ci-templates/deploy-gitops@v3.0.0
     inputs:
       app_name: helloworld
       service_name: helloworld-gui
       manifests_project_path: hello-groupe/helloworld-iac
       manifests_path: k8s
       has_preprod: true
-  - component: $CI_SERVER_FQDN/shared-ci/ci-templates/promote@v2.0.0
+  - component: $CI_SERVER_FQDN/shared-ci/ci-templates/promote@v3.0.0
     inputs:
       manifests_project_path: hello-groupe/helloworld-iac
+
+# Monorepo multi-service : build-docker ne construit qu'une image par
+# inclusion (defauts ci-dessus = helloworld-svc). Le second service est
+# ajoute ici via parallel:matrix sur les jobs deja fournis par le composant
+# (redeclarer un job avec le meme nom fusionne ses cles avec la definition
+# incluse, cf. ci-templates/AGENTS.md) :
+docker-buildah-build:
+  parallel:
+    matrix:
+      - DOCKER_CONTEXT_PATH: helloworld-svc
+        DOCKER_FILE: helloworld-svc/Dockerfile
+        DOCKER_SNAPSHOT_IMAGE: ghcr.io/k8s-gitops-lab/helloworld-svc/snapshot:$CI_COMMIT_SHORT_SHA
+        DOCKER_RELEASE_IMAGE: ghcr.io/k8s-gitops-lab/helloworld-svc
+      - DOCKER_CONTEXT_PATH: helloworld-gui
+        DOCKER_FILE: helloworld-gui/Dockerfile
+        DOCKER_SNAPSHOT_IMAGE: ghcr.io/k8s-gitops-lab/helloworld-gui/snapshot:$CI_COMMIT_SHORT_SHA
+        DOCKER_RELEASE_IMAGE: ghcr.io/k8s-gitops-lab/helloworld-gui
+
+docker-publish:
+  parallel:
+    matrix:
+      - DOCKER_SNAPSHOT_IMAGE: ghcr.io/k8s-gitops-lab/helloworld-svc/snapshot:$CI_COMMIT_SHORT_SHA
+        DOCKER_RELEASE_IMAGE: ghcr.io/k8s-gitops-lab/helloworld-svc
+      - DOCKER_SNAPSHOT_IMAGE: ghcr.io/k8s-gitops-lab/helloworld-gui/snapshot:$CI_COMMIT_SHORT_SHA
+        DOCKER_RELEASE_IMAGE: ghcr.io/k8s-gitops-lab/helloworld-gui

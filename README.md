@@ -72,7 +72,7 @@ Si `gitlab-ci-local` tente de récupérer `shared-ci/ci-templates` depuis GitHub
 précharger son cache de components depuis le dépôt voisin :
 
 ```bash
-# <ref> = la ref des components déclarée dans .gitlab-ci.yml (ex. v2.0.0)
+# <ref> = la ref des components déclarée dans .gitlab-ci.yml (ex. v3.0.0)
 mkdir -p .gitlab-ci-local/includes/github.com/shared-ci/ci-templates/<ref>/templates
 cp -R ../ci-templates/templates/* \
   .gitlab-ci-local/includes/github.com/shared-ci/ci-templates/<ref>/templates/
@@ -85,15 +85,19 @@ gitlab-ci-local --list
 ```
 
 ```
-semantic-release  (promote)    main
-build-dev         (build)      main
-build-rec         (build)      tag vX.Y.Z
-deploy-dev        (deploy)     main
-deploy-rec        (deploy)     tag vX.Y.Z
-deploy-preprod    (deploy)     tag vX.Y.Z, manuel
-deploy-prod       (deploy)     tag vX.Y.Z, manuel
-rollback-prod     (promote)    manuel + REVERT_SHA
+semantic-release        (publish)        main
+docker-buildah-build    (package-build)  main
+docker-publish          (publish)        tag vX.Y.Z
+deploy-dev              (deploy)         main
+deploy-rec              (deploy)         tag vX.Y.Z
+deploy-preprod          (deploy)         tag vX.Y.Z, manuel
+deploy-prod             (deploy)         tag vX.Y.Z, manuel
+rollback-prod           (promote)        manuel + REVERT_SHA
 ```
+
+`docker-buildah-build`/`docker-publish` sont matrixés (un par service, voir
+`.gitlab-ci.yml`) : `gitlab-ci-local --list` affiche donc en réalité une
+entrée par service (ex. `docker-buildah-build: [helloworld-svc]`).
 
 ### Exécution
 
@@ -117,23 +121,30 @@ gitlab-ci-local --variables-file .gitlab-ci-local-secrets.yml \
   --variable REVERT_SHA=abc1234 rollback-prod
 ```
 
-### Jobs de build (Kaniko)
+### Jobs de build (to-be-continuous/docker)
 
-Les jobs `build-dev` et `build-rec` utilisent Kaniko, qui construit les images
+`docker-buildah-build` et `docker-publish` viennent du component
+[to-be-continuous/docker](https://gitlab.com/to-be-continuous/docker), inclus
+par `ci-templates/templates/build-docker`. Buildah construit les images
 **sans démon Docker** et les pousse directement sur GHCR
 (`ghcr.io/k8s-gitops-lab`).
 
-En local, Kaniko a besoin d'un `GHCR_TOKEN` valide (voir
+En local, ce job a besoin d'un `GHCR_TOKEN` valide (voir
 `.gitlab-ci-local-secrets.yml`, gitignored) :
 
 ```bash
 gitlab-ci-local --variables-file .gitlab-ci-local-secrets.yml \
-  build-dev
+  "docker-buildah-build: [helloworld-svc]"
 ```
 
-> **Note ARM64** : L'image Kaniko (`gcr.io/kaniko-project/executor:debug`) est amd64.
-> Sur Apple Silicon, elle s'exécute via la couche d'émulation Rosetta de Docker Desktop.
-> Pour des builds locaux rapides, préférer `docker compose build`.
+`gitlab-ci-local` récupère aussi le component externe
+`gitlab.com/to-be-continuous/docker` (pas seulement `shared-ci/ci-templates`
+en interne) : par défaut via `git archive` en SSH, qui nécessite une clé SSH
+enregistrée sur un compte gitlab.com même pour ce projet public.
+
+> **Note ARM64** : Buildah tourne dans une image amd64. Sur Apple Silicon,
+> elle s'exécute via la couche d'émulation Rosetta de Docker Desktop. Pour
+> des builds locaux rapides, préférer `docker compose build`.
 
 ---
 
@@ -143,11 +154,11 @@ La chaîne de promotion est déclenchée depuis GitLab (push sur `main` ou tag `
 
 ```
 push main
-  └─ build-dev  ──►  deploy-dev   (automatique)
+  └─ docker-buildah-build  ──►  deploy-dev   (automatique)
      tag vX.Y.Z
-  └─ build-rec  ──►  deploy-rec   (automatique)
-                 ──►  deploy-preprod (manuel)
-                 ──►  deploy-prod    (manuel)
+  └─ docker-publish  ──►  deploy-rec      (automatique)
+                     ──►  deploy-preprod  (manuel)
+                     ──►  deploy-prod     (manuel)
 ```
 
 Le tag est créé par le job `semantic-release`, exécuté automatiquement sur

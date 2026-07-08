@@ -27,9 +27,10 @@ docker compose up --build
 ## Contrat avec la plateforme
 
 - Chaque service doit conserver un sous-dossier portant **exactement son nom**
-  et un `Dockerfile` à sa racine (Kaniko utilise ce chemin).
-- L'input `services` du component `build-kaniko` liste les couples
-  `<service>=<image>` séparés par des espaces.
+  et un `Dockerfile` à sa racine (`build-docker` utilise ce chemin).
+- Le component `build-docker` ne construit qu'un service par inclusion ; le
+  second service (`helloworld-gui`) est ajouté via `parallel: matrix:` sur
+  les jobs `docker-buildah-build`/`docker-publish` dans `.gitlab-ci.yml`.
 - L'input `service_name` désigne le service vitrine pour les URLs d'environnement GitLab.
 
 ## `.gitlab-ci.yml` — cohérence avec l'inventaire
