@@ -54,3 +54,10 @@ exécuté qu'depuis un runner Kubernetes.
 - Ne pas modifier les tags d'images dans `helloworld-iac` manuellement — c'est
   le rôle de `deploy.py` dans la CI.
 - Ne pas versionner les fichiers `certs/*.crt` produits localement.
+
+## Gouvernance du développement
+
+Ce repo fait partie de la plateforme poc-devops : toute contribution suit
+les trois axes de maîtrise (produit, code, architecture) définis dans
+`cockpit/AGENTS.md`, section « Gouvernance du développement » — PRD et
+backlog dans `cockpit/docs/`.
