@@ -7,20 +7,20 @@ stages:
   - promote        # rollback-prod
 
 include:
-  - component: $CI_SERVER_FQDN/shared-ci/ci-templates/build-docker@v3.0.0
+  - component: $CI_SERVER_FQDN/shared-ci/ci-templates/build-docker@v3.0.1
     inputs:
       dockerfile: helloworld-svc/Dockerfile
       context_path: helloworld-svc
       snapshot_image: ghcr.io/k8s-gitops-lab/helloworld-svc/snapshot:$CI_COMMIT_SHORT_SHA
       release_image: ghcr.io/k8s-gitops-lab/helloworld-svc
-  - component: $CI_SERVER_FQDN/shared-ci/ci-templates/deploy-gitops@v3.0.0
+  - component: $CI_SERVER_FQDN/shared-ci/ci-templates/deploy-gitops@v3.0.1
     inputs:
       app_name: helloworld
       service_name: helloworld-gui
       manifests_project_path: hello-groupe/helloworld-iac
       manifests_path: k8s
       has_preprod: true
-  - component: $CI_SERVER_FQDN/shared-ci/ci-templates/promote@v3.0.0
+  - component: $CI_SERVER_FQDN/shared-ci/ci-templates/promote@v3.0.1
     inputs:
       manifests_project_path: hello-groupe/helloworld-iac
 
