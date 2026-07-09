@@ -1,0 +1,7 @@
+# Configuration hadolint (auto-détectée par le job docker-hadolint de
+# to-be-continuous via ci-templates/build-docker).
+# DL3008 (épingler les versions apt-get) : non appliqué sur ce POC — images
+# de base Debian, la reproductibilité est portée par le tag de l'image de
+# base, pas par le pin de chaque paquet.
+ignored:
+  - DL3008
