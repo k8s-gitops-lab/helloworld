@@ -5,7 +5,7 @@ Application exemple du POC, sous forme de monorepo multi-services :
 - `helloworld-svc` : API Rust (`GET /`, `/hello/{name}`, `/health`)
 - `helloworld-gui` : frontend statique nginx
 
-La CI est gérée par les components partagés `shared-ci/ci-templates` inclus dans `.gitlab-ci.yml`, exécutée sur gitlab.com depuis le 2026-07-10 (bascule big bang, cf. `cockpit/docs/backlog.md`).
+La CI est gérée par les components partagés `shared-ci/ci-templates` inclus dans `.gitlab-ci.yml`, exécutée sur gitlab.com depuis le 2026-07-10 (bascule big bang, cf. `cockpit/docs/backlog.md`) sur un runner self-hosted arm64 dédié (runners partagés SaaS désactivés au niveau du groupe).
 
 ---
 
