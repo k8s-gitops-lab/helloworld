@@ -1,4 +1,5 @@
 use axum::{extract::Path, http::StatusCode, response::IntoResponse, routing::get, Json, Router};
+use axum_prometheus::{metrics_exporter_prometheus::PrometheusBuilder, PrometheusMetricLayer};
 use serde::Serialize;
 use std::net::SocketAddr;
 
@@ -15,10 +16,20 @@ struct HealthResponse {
 
 #[tokio::main]
 async fn main() {
+    // `install_recorder` (pas `PrometheusMetricLayer::pair`) : enregistre le
+    // recorder Prometheus en process sans ouvrir de listener HTTP dedie, on
+    // sert nous-memes /metrics via la route Axum ci-dessous.
+    let metric_layer = PrometheusMetricLayer::new();
+    let metric_handle = PrometheusBuilder::new()
+        .install_recorder()
+        .expect("failed to install Prometheus recorder");
+
     let app = Router::new()
         .route("/", get(root))
         .route("/hello/:name", get(hello))
-        .route("/health", get(health));
+        .route("/health", get(health))
+        .route("/metrics", get(|| async move { metric_handle.render() }))
+        .layer(metric_layer);
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 8000));
     let listener = tokio::net::TcpListener::bind(addr)
