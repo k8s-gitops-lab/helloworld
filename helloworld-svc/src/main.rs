@@ -2,6 +2,9 @@ use axum::{extract::Path, http::StatusCode, response::IntoResponse, routing::get
 use axum_prometheus::{metrics_exporter_prometheus::PrometheusBuilder, PrometheusMetricLayer};
 use serde::Serialize;
 use std::net::SocketAddr;
+use tower_http::trace::{DefaultMakeSpan, DefaultOnResponse, TraceLayer};
+use tracing::Level;
+use tracing_subscriber::EnvFilter;
 
 #[derive(Serialize)]
 struct MessageResponse {
@@ -16,6 +19,14 @@ struct HealthResponse {
 
 #[tokio::main]
 async fn main() {
+    // Logs structures JSON sur stdout (collectes par le pod_logs_via_loki de
+    // l'add-on grafana-k8s-monitoring, cf. platform-gitops). Niveau par
+    // defaut "info", surchargable via RUST_LOG.
+    tracing_subscriber::fmt()
+        .json()
+        .with_env_filter(EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info")))
+        .init();
+
     // `install_recorder` (pas `PrometheusMetricLayer::pair`) : enregistre le
     // recorder Prometheus en process sans ouvrir de listener HTTP dedie, on
     // sert nous-memes /metrics via la route Axum ci-dessous.
@@ -29,7 +40,12 @@ async fn main() {
         .route("/hello/:name", get(hello))
         .route("/health", get(health))
         .route("/metrics", get(|| async move { metric_handle.render() }))
-        .layer(metric_layer);
+        .layer(metric_layer)
+        .layer(
+            TraceLayer::new_for_http()
+                .make_span_with(DefaultMakeSpan::new().level(Level::INFO))
+                .on_response(DefaultOnResponse::new().level(Level::INFO)),
+        );
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 8000));
     let listener = tokio::net::TcpListener::bind(addr)
